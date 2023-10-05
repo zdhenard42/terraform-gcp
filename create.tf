@@ -1,3 +1,8 @@
+resource "google_compute_network" "vpc_network" {
+  name                    = "terraform-network"
+  auto_create_subnetworks = "true"
+}
+
 resource "google_compute_instance" "default1" {
   name         = "virtual-machine-from-terraform"
   machine_type = "e2-micro"
@@ -10,7 +15,7 @@ resource "google_compute_instance" "default1" {
   }
 
   network_interface {
-    network = "default"
+    network = google_compute_network.vpc_network.self_link
 
     access_config {
       // Include this section to give the VM an external ip address
@@ -34,7 +39,7 @@ resource "google_compute_instance" "default2" {
   }
 
   network_interface {
-    network = "default"
+    network = google_compute_network.vpc_network.self_link
 
     access_config {
       // Include this section to give the VM an external ip address
@@ -49,7 +54,7 @@ resource "google_compute_instance" "default2" {
 
 resource "google_compute_firewall" "http-server" {
   name    = "default-allow-http-terraform"
-  network = "default"
+  network = google_compute_network.vpc_network.self_link
 
   allow {
     protocol = "tcp"
