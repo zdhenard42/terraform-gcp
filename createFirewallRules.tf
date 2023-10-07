@@ -7,7 +7,7 @@ resource "google_compute_firewall" "deny-all"{
     protocol = "all"
   }
 
-  // Allow traffic from everywhere to instances with an http-server tag
+  // deny all traffic from all ports and all sources
   source_ranges = ["0.0.0.0/0"]
   target_tags   = ["default-rules"]
 }
@@ -22,23 +22,38 @@ resource "google_compute_firewall" "http-server" {
     ports    = ["80"]
   }
 
-  // Allow traffic from everywhere to instances with an http-server tag
+  // Allow traffic from everywhere to instances over http
   source_ranges = ["0.0.0.0/0"]
   target_tags   = ["default-rules"]
 }
 
 
-resource "google_compute_firewall" "allow-icmp" {
-  name    = "default-allowme-icmp-terraform"
+resource "google_compute_firewall" "allow-zack" {
+  name    = "default-allowzack-all-terraform"
   network = google_compute_network.vpc_network.self_link
   priority = 1000
 
   allow {
-    protocol = "icmp"
+    protocol = "all"
   }
 
-  source_ranges = ["97.81.168.114"]
+  source_ranges = [var.zackIP]
   target_tags   = ["default-rules"]
 }
+
+
+resource "google_compute_firewall" "allow-mal" {
+  name    = "default-allowmal-all-terraform"
+  network = google_compute_network.vpc_network.self_link
+  priority = 1000
+
+  allow {
+    protocol = "all"
+  }
+
+  source_ranges = [var.malIP]
+  target_tags   = ["default-rules"]
+}
+
 
 
